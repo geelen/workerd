@@ -333,6 +333,8 @@ struct Worker {
 
       wrapped @14 :WrappedBinding;
       # Wraps a collection of inner bindings in a common api functionality.
+      
+      analyticsEngine @15 :ServiceDesignator; 
 
       # TODO(someday): dispatch, analyticsEngine, other new features
     }
@@ -354,6 +356,7 @@ struct Worker {
         kvNamespace @8 :Void;
         r2Bucket @9 :Void;
         r2Admin @10 :Void;
+        analyticsEngine @11 : Void;
       }
     }
 
