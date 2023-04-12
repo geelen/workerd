@@ -489,9 +489,8 @@ bool SqliteDatabase::isAuthorized(int actionCode,
       return false;
 
     case SQLITE_RECURSIVE          :   /* NULL            NULL            */
-      // Recursive select. Disallow because AFAICT there's no way to prevent infinite loops.
       // TODO(someday): Find a way to apply CPU time limits to SQLite.
-      return false;
+      return true;
 
     case SQLITE_COPY               :   /* No longer used */
       // These are operations we simply don't support today.
