@@ -42,6 +42,7 @@ class D1Database {
     return new D1PreparedStatement(this, query)
   }
 
+  // DEPRECATED, TO BE REMOVED WITH NEXT BREAKING CHANGE
   public async dump(): Promise<ArrayBuffer> {
     const response = await this.fetcher.fetch('http://d1/dump', {
       method: 'POST',
@@ -76,9 +77,8 @@ class D1Database {
   }
 
   public async exec(query: string): Promise<D1ExecResult> {
-    // should be /execute - see CFSQL-52
     const lines = query.trim().split('\n')
-    const _exec = await this._send('/query', lines, [])
+    const _exec = await this._send('/execute', lines, [])
     const exec = Array.isArray(_exec) ? _exec : [_exec]
     const error = exec
       .map((r) => {
@@ -108,7 +108,7 @@ class D1Database {
 
   public async _sendOrThrow<T = unknown>(
     endpoint: string,
-    query: unknown,
+    query: string | string[],
     params: unknown[]
   ): Promise<D1Result<T>[] | D1Result<T>> {
     const results = await this._send(endpoint, query, params)
@@ -124,13 +124,13 @@ class D1Database {
 
   public async _send<T = unknown>(
     endpoint: string,
-    query: unknown,
+    query: string | string[],
     params: unknown[]
   ): Promise<D1UpstreamResponse<T>[] | D1UpstreamResponse<T>> {
     /* this needs work - we currently only support ordered ?n params */
     const body = JSON.stringify(
-      typeof query == 'object'
-        ? (query as string[]).map((s: string, index: number) => {
+      Array.isArray(query)
+        ? query.map((s: string, index: number) => {
             return { sql: s, params: params[index] }
           })
         : {
